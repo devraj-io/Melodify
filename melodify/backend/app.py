@@ -12,6 +12,10 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 CORS(app)
 
+@app.route('/')
+def home():
+    return "🎵 Melodify AI Engine is live and kicking!"
+
 YDL_OPTIONS = {
     'format': 'bestaudio/best',
     'noplaylist': True,
