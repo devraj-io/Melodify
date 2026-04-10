@@ -9,7 +9,7 @@ import React, {
 import type { Song, RepeatMode } from '@/types';
 
 // Ensure this matches your Flask server address
-const FLASK_API = 'http://localhost:5000';
+const FLASK_API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 interface PlayerContextType {
   currentSong: Song | null;
@@ -56,7 +56,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     try {
       const response = await fetch(`${FLASK_API}/recommendations/${song.id}`);
       const aiRecommendations = await response.json();
-      
+
       // Update the queue with AI results
       setQueue(aiRecommendations);
       console.log("AI Radio Mode: Content-Based Filtering applied to queue.");
@@ -74,12 +74,12 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       // Industry standard: Fetch a fresh stream URL before playback
       const res = await fetch(`${FLASK_API}/stream/${song.id}`);
       const data = await res.json();
-      
+
       setCurrentSong(song);
       if (newQueue) {
         setQueue(newQueue.filter((s) => s.id !== song.id));
       }
-      
+
       audio.src = data.url; // Use the fresh URL from Flask
       audio.load();
       await audio.play();
@@ -102,7 +102,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     if (shuffle) {
       nextIndex = Math.floor(Math.random() * queue.length);
     }
-    
+
     const nextSong = queue[nextIndex];
     const newQueue = queue.filter((_, i) => i !== nextIndex);
     setQueue(newQueue);

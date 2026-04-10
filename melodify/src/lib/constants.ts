@@ -1,1 +1,1 @@
-export const FLASK_API = 'http://localhost:5000';
+export const FLASK_API = import.meta.env.VITE_API_URL || 'http://localhost:5000';

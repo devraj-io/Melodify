@@ -80,8 +80,8 @@ export default function HomePage() {
           {isLoading
             ? Array.from({ length: 12 }).map((_, i) => <SongCardSkeleton key={i} />)
             : songs.map((song) => (
-                <SongCard key={song.id} song={song} allSongs={songs} />
-              ))}
+              <SongCard key={song.id} song={song} allSongs={songs} />
+            ))}
         </div>
 
         {!isLoading && !isError && songs.length === 0 && (
