@@ -52,22 +52,22 @@ export default function HomePage() {
         </div>
 
         {/* Error state */}
-        {isError && (
-          <div
-            style={{
-              background: '#1a1a1a', borderRadius: 12, padding: 40,
-              textAlign: 'center', border: '1px solid #2a2a2a',
-            }}
-          >
-            <Music size={48} color="#3a3a3a" style={{ marginBottom: 12 }} />
-            <p style={{ color: '#b3b3b3', fontSize: 16, fontWeight: 600 }}>
-              Couldn't load songs
-            </p>
-            <p style={{ color: '#5a5a5a', fontSize: 13, marginTop: 6 }}>
-              Make sure your Flask API is running at localhost:5000
-            </p>
-          </div>
-        )}
+{isError && (
+  <div
+    style={{
+      background: '#1a1a1a', borderRadius: 12, padding: 40,
+      textAlign: 'center', border: '1px solid #2a2a2a',
+    }}
+  >
+    <Music size={48} color="#3a3a3a" style={{ marginBottom: 12 }} />
+    <p style={{ color: '#b3b3b3', fontSize: 16, fontWeight: 600 }}>
+      Backend is waking up...
+    </p>
+    <p style={{ color: '#5a5a5a', fontSize: 13, marginTop: 6 }}>
+      Please wait 30-60 seconds for the free server to start.
+    </p>
+  </div>
+)}
 
         {/* Songs grid */}
         <div
