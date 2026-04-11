@@ -14,7 +14,7 @@ CORS(app)
 
 # Updated options to look more like a real browser to avoid bot detection
 YDL_OPTIONS = {
-    'format': 'bestaudio/best',
+    'format': 'bestaudio/bestaudio*/best',
     'noplaylist': True,
     'quiet': True,
     'no_warnings': True,
@@ -23,6 +23,13 @@ YDL_OPTIONS = {
     'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     'referer': 'https://www.google.com/',
     'cookiefile': '/etc/secrets/cookies.txt',
+    'prefer_ffmpeg': True,
+    'postprocessors': [{
+        'key': 'FFmpegExtractAudio',
+        'preferredcodec': 'mp3',
+        'preferredquality': '192',
+    }],
+    'ignoreerrors': False,
 }
 
 # These songs will show up if YouTube blocks the server (prevents 500 error)
@@ -108,7 +115,8 @@ def stream_song(video_id):
             info = ydl.extract_info(f"https://www.youtube.com/watch?v={video_id}", download=False)
             return jsonify({"url": info.get('url')})
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        logger.error(f"Stream Error: {str(e)}")
+        return jsonify({"error": f"Failed to get stream URL: {str(e)}"}), 500
 
 @app.route('/recommendations/<video_id>', methods=['GET'])
 def get_ai_recommendations(video_id):
