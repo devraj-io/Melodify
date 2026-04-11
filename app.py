@@ -12,12 +12,19 @@ app = Flask(__name__)
 CORS(app)
 
 YDL_OPTIONS = {
-    'format': 'bestaudio/best',
+    'format': 'bestaudio/bestaudio*/best',
     'noplaylist': True,
     'quiet': True,
     'no_warnings': True,
     'default_search': 'ytsearch',
     'cookiefile': '/etc/secrets/cookies.txt',
+    'prefer_ffmpeg': True,
+    'postprocessors': [{
+        'key': 'FFmpegExtractAudio',
+        'preferredcodec': 'mp3',
+        'preferredquality': '192',
+    }],
+    'ignoreerrors': False,
     # 'source_address': '0.0.0.0', # Render par isse issues ho sakte hain, test kar lein
 }
 
@@ -48,7 +55,8 @@ def get_featured():
             songs = [extract_song_data(e) for e in info['entries'] if e]
             return jsonify([s for s in songs if s is not None])
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        logger.error(f"Featured Error: {str(e)}")
+        return jsonify({"error": f"Failed to fetch featured songs: {str(e)}"}), 500
 
 @app.route('/search', methods=['GET'])
 def search_songs():
@@ -60,7 +68,8 @@ def search_songs():
             songs = [extract_song_data(e) for e in info['entries'] if e]
             return jsonify([s for s in songs if s is not None])
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        logger.error(f"Search Error: {str(e)}")
+        return jsonify({"error": f"Search failed: {str(e)}"}), 500
 
 @app.route('/stream/<video_id>', methods=['GET'])
 def stream_song(video_id):
@@ -69,7 +78,8 @@ def stream_song(video_id):
             info = ydl.extract_info(f"https://www.youtube.com/watch?v={video_id}", download=False)
             return jsonify({"url": info.get('url')})
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        logger.error(f"Stream Error: {str(e)}")
+        return jsonify({"error": f"Failed to get stream URL: {str(e)}"}), 500
 
 @app.route('/recommendations/<video_id>', methods=['GET'])
 def get_ai_recommendations(video_id):
@@ -108,7 +118,7 @@ def get_ai_recommendations(video_id):
             
     except Exception as e:
         logger.error(f"Recommender Error: {str(e)}")
-        return jsonify({"error": "Failed to populate queue"}), 500
+        return jsonify({"error": f"Failed to populate queue: {str(e)}"}), 500
 
 if __name__ == '__main__':
     # Startup check for cookies file (Render Secret Files)

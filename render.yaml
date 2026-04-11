@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: melodify-backend
+    env: python
+    buildCommand: "pip install -r requirements.txt; mkdir -p $HOME/bin; curl -L https://github.com/yt-dlp/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz | tar xJ --strip-components=1 -C $HOME/bin; mv $HOME/bin/bin/* $HOME/bin/ 2>/dev/null || true"
+    startCommand: "PATH=$HOME/bin:$PATH gunicorn app:app"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
