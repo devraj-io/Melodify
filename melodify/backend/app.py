@@ -3,6 +3,7 @@ from flask_cors import CORS
 import yt_dlp
 import logging
 import os
+import shutil
 
 # Logging for debugging
 logging.basicConfig(level=logging.INFO)
@@ -22,7 +23,7 @@ YDL_OPTIONS = {
     'source_address': '0.0.0.0',
     'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     'referer': 'https://www.google.com/',
-    'cookiefile': '/etc/secrets/cookies.txt',
+    'cookiefile': '/tmp/cookies.txt',
     'prefer_ffmpeg': True,
     'postprocessors': [{
         'key': 'FFmpegExtractAudio',
@@ -145,11 +146,17 @@ def get_ai_recommendations(video_id):
 
 if __name__ == '__main__':
     # Startup check for cookies file (Render Secret Files)
-    COOKIES_PATH = '/etc/secrets/cookies.txt'
-    if os.path.exists(COOKIES_PATH):
-        logger.info(f"Cookies file found at {COOKIES_PATH}")
+    COOKIES_SRC = '/etc/secrets/cookies.txt'
+    COOKIES_DEST = '/tmp/cookies.txt'
+    
+    if os.path.exists(COOKIES_SRC):
+        try:
+            shutil.copyfile(COOKIES_SRC, COOKIES_DEST)
+            logger.info(f"Cookies file copied to {COOKIES_DEST}")
+        except Exception as e:
+            logger.error(f"Failed to copy cookies: {str(e)}")
     else:
-        logger.warning(f"CRITICAL: Cookies file NOT found at {COOKIES_PATH}. YouTube requests may fail.")
+        logger.warning(f"CRITICAL: Cookies file NOT found at {COOKIES_SRC}. YouTube requests may fail.")
 
     # Render uses the PORT environment variable
     port = int(os.environ.get('PORT', 5000))
