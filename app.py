@@ -17,6 +17,7 @@ YDL_OPTIONS = {
     'quiet': True,
     'no_warnings': True,
     'default_search': 'ytsearch',
+    'cookiefile': '/etc/secrets/cookies.txt',
     # 'source_address': '0.0.0.0', # Render par isse issues ho sakte hain, test kar lein
 }
 
@@ -110,6 +111,13 @@ def get_ai_recommendations(video_id):
         return jsonify({"error": "Failed to populate queue"}), 500
 
 if __name__ == '__main__':
+    # Startup check for cookies file (Render Secret Files)
+    COOKIES_PATH = '/etc/secrets/cookies.txt'
+    if os.path.exists(COOKIES_PATH):
+        logger.info(f"Cookies file found at {COOKIES_PATH}")
+    else:
+        logger.warning(f"CRITICAL: Cookies file NOT found at {COOKIES_PATH}. YouTube requests may fail.")
+
     # Render deployment ke liye zaroori
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)

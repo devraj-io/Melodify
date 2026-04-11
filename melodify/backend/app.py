@@ -22,6 +22,7 @@ YDL_OPTIONS = {
     'source_address': '0.0.0.0',
     'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     'referer': 'https://www.google.com/',
+    'cookiefile': '/etc/secrets/cookies.txt',
 }
 
 # These songs will show up if YouTube blocks the server (prevents 500 error)
@@ -135,6 +136,13 @@ def get_ai_recommendations(video_id):
         return jsonify(FALLBACK_SONGS)
 
 if __name__ == '__main__':
+    # Startup check for cookies file (Render Secret Files)
+    COOKIES_PATH = '/etc/secrets/cookies.txt'
+    if os.path.exists(COOKIES_PATH):
+        logger.info(f"Cookies file found at {COOKIES_PATH}")
+    else:
+        logger.warning(f"CRITICAL: Cookies file NOT found at {COOKIES_PATH}. YouTube requests may fail.")
+
     # Render uses the PORT environment variable
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
